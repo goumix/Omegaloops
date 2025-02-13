@@ -21,7 +21,11 @@ export default function Navbar() {
       </div>
       <div className="flex flex-row gap-4">
         {/* <Searchbar /> */}
-        <Button><CirclePlus className="w-6 h-6" color="black" />Add sample/collection</Button>
+        {router === "/marketplace" || router === "/" ?
+          <Button><CirclePlus className="w-6 h-6" color="black" />Add sample/collection</Button>
+          :
+          <Button><CirclePlus className="w-6 h-6" color="black" />Create project</Button>
+        }
       </div>
     </div>
   );
