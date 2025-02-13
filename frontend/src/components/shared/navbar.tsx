@@ -10,7 +10,7 @@ export default function Navbar() {
   const router = usePathname();
 
   return (
-    <div className="flex flex-row w-full h-16 items-center justify-between gap-4 p-4 px-6 bg-stone-700">
+    <div className="flex flex-row w-full h-16 items-center justify-between gap-4 p-4 px-6 bg-stone-700 fixed top-0 left-0 z-10 pl-52">
       <div className="flex flex-row gap-4 p-1 bg-stone-500 rounded-full">
         <Link href="/marketplace" className={`flex flex-row items-center gap-2 p-2 px-4 ${(router === "/marketplace" || router === "/") ? "bg-white rounded-full" : ""}`}>
           <p className={`font-bold ${(router === "/marketplace" || router === "/") ? "text-black" : ""}`}>Marketplace</p>

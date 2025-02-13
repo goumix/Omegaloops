@@ -34,7 +34,9 @@ export default function RootLayout({
           <Sidebar />
           <div className="flex flex-col w-full h-full">
             <Navbar />
-            {children}
+            <div className="w-full h-full pl-52 pt-16 bg-stone-700">
+              {children}
+            </div>
           </div>
         </main>
         <Footer />

@@ -9,7 +9,7 @@ export default function Sidebar() {
   const router = usePathname();
 
   return (
-    <div className="flex flex-col w-52 h-screen items-center justify-between gap-4 p-4 bg-stone-700">
+    <div className="flex flex-col w-52 h-screen items-center justify-between gap-4 p-4 bg-stone-700 fixed top-0 left-0 z-20">
       <div className="flex flex-col justify-center gap-8">
         <h1 className="text-2xl font-bold">Omegaloops</h1>
         {router === "/marketplace" || router === "/" ?
