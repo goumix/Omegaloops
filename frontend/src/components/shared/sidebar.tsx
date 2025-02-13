@@ -55,14 +55,6 @@ export default function Sidebar() {
         </Link>
         <Button>Connect Wallet</Button>
       </div>
-
-      <div className="w-full flex flex-col gap-4 p-4">
-        <Link href="/" className="flex flex-row items-center gap-2">
-          <User className="w-6 h-6" />
-          <p>Profil</p>
-        </Link>
-        <Button>Connect Wallet</Button>
-      </div>
     </div>
   );
 }
