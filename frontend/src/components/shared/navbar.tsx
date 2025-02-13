@@ -1,24 +1,27 @@
-import { CirclePlus, ShoppingCart, SquarePlay } from "lucide-react";
+"use client";
+
+import { CirclePlus } from "lucide-react";
 import { Button } from "../ui/button";
-import Searchbar from "./searchbar";
+// import Searchbar from "./searchbar";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const router = usePathname();
+
   return (
     <div className="flex flex-row w-full h-16 items-center justify-between gap-4 p-4 px-6 bg-stone-700">
-      <div className="flex flex-row gap-6 py-2 px-6 bg-stone-500 rounded-full">
-        <Link href="/" className="flex flex-row items-center gap-2">
-          <ShoppingCart className="w-6 h-6" />
-          <p>Marketplace</p>
+      <div className="flex flex-row gap-4 p-1 bg-stone-500 rounded-full">
+        <Link href="/marketplace" className={`flex flex-row items-center gap-2 p-2 px-4 ${(router === "/marketplace" || router === "/") ? "bg-white rounded-full" : ""}`}>
+          <p className={`font-bold ${(router === "/marketplace" || router === "/") ? "text-black" : ""}`}>Marketplace</p>
         </Link>
-        <Link href="/" className="flex flex-row items-center gap-2">
-          <SquarePlay className="w-6 h-6" />
-          <p>DAW</p>
+        <Link href="/daw" className={`flex flex-row items-center gap-2 p-2 px-4 ${(router === "/daw") ? "bg-white rounded-full" : ""}`}>
+          <p className={`font-bold ${(router === "/daw") ? "text-black" : ""}`}>DAW</p>
         </Link>
       </div>
       <div className="flex flex-row gap-4">
-        <Searchbar />
-        <Button><CirclePlus className="w-6 h-6" />Add sample</Button>
+        {/* <Searchbar /> */}
+        <Button><CirclePlus className="w-6 h-6" color="black" />Add sample/collection</Button>
       </div>
     </div>
   );
