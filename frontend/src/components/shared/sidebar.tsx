@@ -41,6 +41,10 @@ export default function Sidebar() {
               <BookHeadphones className="w-6 h-6" />
               <p>Projects</p>
             </Link>
+            <Link href="/daw/projects" className="flex flex-row items-center gap-2">
+              <AudioLines className="w-6 h-6" />
+              <p>My samples</p>
+            </Link>
           </div>
         }
       </div>
