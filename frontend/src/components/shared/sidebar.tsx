@@ -44,27 +44,25 @@ export default function Sidebar() {
           </div>
         }
       </div>
-      {router === "/marketplace" || router === "/" ?
-        <div className="w-full flex flex-col gap-4 p-4">
-          <Link href="/" className="flex flex-row items-center gap-2">
-            <Scroll className="w-6 h-6" />
-            <p>White paper</p>
-          </Link>
-          <Link href="/" className="flex flex-row items-center gap-2">
-            <User className="w-6 h-6" />
-            <p>Profil</p>
-          </Link>
-          <Button>Connect Wallet</Button>
-        </div>
-        :
-        <div className="w-full flex flex-col gap-4 p-4">
-          <Link href="/" className="flex flex-row items-center gap-2">
-            <User className="w-6 h-6" />
-            <p>Profil</p>
-          </Link>
-          <Button>Connect Wallet</Button>
-        </div>
-      }
+      <div className="w-full flex flex-col gap-4 p-4">
+        <Link href="/" className="flex flex-row items-center gap-2">
+          <Scroll className="w-6 h-6" />
+          <p>White paper</p>
+        </Link>
+        <Link href="/" className="flex flex-row items-center gap-2">
+          <User className="w-6 h-6" />
+          <p>Profil</p>
+        </Link>
+        <Button>Connect Wallet</Button>
+      </div>
+
+      <div className="w-full flex flex-col gap-4 p-4">
+        <Link href="/" className="flex flex-row items-center gap-2">
+          <User className="w-6 h-6" />
+          <p>Profil</p>
+        </Link>
+        <Button>Connect Wallet</Button>
+      </div>
     </div>
   );
 }
