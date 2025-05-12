@@ -35,7 +35,10 @@ contract Marketplace is AccessControl {
         require(price > 0, "Item is not for sale");
         require(msg.value >= price, "Insufficient funds");
 
-        address seller = msg.sender;
+        // Find the seller by checking who owns the token
+        address seller = sampleToken.balanceOf(msg.sender, id) > 0 ? msg.sender : address(0);
+        require(seller != address(0), "Seller not found");
+
         sampleToken.safeTransferFrom(seller, msg.sender, id, 1, "");
 
         payable(seller).transfer(msg.value);
