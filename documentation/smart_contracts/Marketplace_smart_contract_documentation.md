@@ -1,81 +1,114 @@
-# Marketplace Smart Contract Documentation
+# Marketplace.sol - Smart Contract Documentation
 
-## Overview
-This document provides an overview of the smart contract used for a decentralized application (dApp) designed to tokenize and trade audio samples. The smart contract leverages Ethereum standards to enable secure ownership, licensing, and resale of digital samples.
+## Objective
 
-## Features
-- **NFT Representation**: Each sample is represented as a unique NFT (ERC-721) or a semi-fungible token (ERC-1155).
-- **Metadata Storage**: Metadata such as title, artist, duration, and BPM are stored on-chain or referenced via IPFS/Arweave.
-- **Minting Mechanism**: Creators can mint samples, setting ownership and royalty distribution.
-- **Royalty System**: Implementing ERC-2981 ensures the original creator receives royalties upon resale.
-- **Marketplace Functionality**: Users can list, buy, and sell samples in a decentralized manner.
-- **Licensing & Rental Options**: Enabling temporary usage rights or permanent transfers.
+The `Marketplace.sol` contract allows users to buy and sell ERC-1155 Semi-Fungible Tokens (SFTs) representing audio samples or albums. It enables artists to list their creations for sale and users to purchase them.
 
-## Smart Contract Architecture
+## Functions
 
-### 1. **Token Standards**
-The smart contract can be based on:
-- **ERC-721**: Each sample is unique and can only have one owner.
-- **ERC-1155**: A sample can have multiple editions with distinct ownership.
+### 1. List an Item for Sale
 
-### 2. **Minting & Ownership**
-- Creators call the `mintSample` function, specifying:
-  - Audio file hash (stored on IPFS/Arweave)
-  - Metadata (title, artist, license details)
-  - Initial price (optional)
-- The contract assigns the NFT to the creator.
+The `listItem` function allows an artist to list a sample or album for sale on the marketplace. The artist sets a price, and the contract associates the sample with that price.
 
-### 3. **Buying & Selling**
-- Users list their NFTs using `listForSale(tokenId, price)`.
-- Interested buyers call `purchase(tokenId)`, transferring ownership.
-- Payments are handled via smart contract escrow.
+```solidity
+function listItem(uint256 id, uint256 price) external onlyArtist {
+  require(balanceOf(msg.sender, id) > 0, "You must own this sample");
+  require(price > 0, "Price must be positive");
+  listings[id] = price;
+  emit ItemListed(id, price);
+}
+```
 
-### 4. **Royalties & Revenue Sharing**
-- The contract implements ERC-2981 to distribute a percentage of resale price to the creator.
-- Supports multiple recipients for collaborative works.
+* **Parameters**:
 
-### 5. **Licensing & Rentals**
-- `licenseSample(tokenId, duration, fee)` enables time-bound access.
-- Users can temporarily hold usage rights without transferring full ownership.
+  * `id`: The ID of the sample or album (ERC-1155 token ID).
+  * `price`: The price for the sample in wei.
 
-### 6. **Security Measures**
-- **Access Control**: Only owners can modify or sell their NFTs.
-- **Reentrancy Protection**: Ensuring safe marketplace transactions.
-- **On-Chain Verification**: Preventing duplicate listings.
+### 2. Buy an Item
 
-## Available Functions
+The `buyItem` function allows a user to purchase a sample or album from the marketplace using Ether. The contract transfers the payment to the artist and the sample to the buyer.
 
-### `mintSample(string memory metadataURI, address creator, uint256 royaltyPercentage)`
-Mints a new sample NFT, assigns it to the creator, and sets royalty percentage.
+```solidity
+function buyItem(uint256 id) external payable {
+  uint256 price = listings[id];
+  require(price > 0, "Item is not for sale");
+  require(msg.value >= price, "Insufficient funds");
 
-### `listForSale(uint256 tokenId, uint256 price)`
-Allows an owner to list their NFT for sale at a specified price.
+  address artist = ownerOf(id);
+  _safeTransferFrom(artist, msg.sender, id, 1, "");
 
-### `purchase(uint256 tokenId)`
-Transfers ownership of the NFT to the buyer upon payment.
+  payable(artist).transfer(msg.value);
 
-### `setRoyalty(uint256 tokenId, uint256 royaltyPercentage)`
-Updates the royalty percentage for a given token.
+  delete listings[id];
 
-### `licenseSample(uint256 tokenId, uint256 duration, uint256 fee)`
-Grants temporary access rights to an NFT in exchange for a fee.
+  emit ItemSold(id, artist, msg.sender, price);
+}
+```
 
-### `withdrawFunds()`
-Allows the contract owner or sellers to withdraw accumulated payments.
+* **Parameters**:
 
-### `getSampleMetadata(uint256 tokenId)`
-Retrieves the metadata of a given sample NFT.
+  * `id`: The ID of the sample or album.
+* **Conditions**:
 
-### `getRoyaltyInfo(uint256 tokenId)`
-Returns the royalty percentage and recipient for a specific NFT.
+  * The sample must be listed for sale.
+  * The user must send sufficient funds (in wei) to purchase the item.
 
-### `isSampleForSale(uint256 tokenId)`
-Checks if a sample NFT is currently listed for sale.
+### 3. View Available Listings
 
-## Next Steps
-- Deploy smart contract on a testnet (Goerli, Sepolia)
-- Audit for security vulnerabilities
-- Integrate governance for fee adjustments
+The `getListings` function allows users to view the list of items currently for sale, including their prices.
 
-This document serves as a foundation for the development and implementation of a decentralized sample marketplace. 🚀
+```solidity
+function getListings() external view returns (uint256[] memory, uint256[] memory) {
+  uint256[] memory ids;
+  uint256[] memory prices;
 
+  for (uint256 i = 0; i < totalSupply; i++) {
+    if (listings[i] > 0) {
+      ids.push(i);
+      prices.push(listings[i]);
+    }
+  }
+
+  return (ids, prices);
+}
+```
+
+* **Returns**:
+
+  * A list of IDs for items currently for sale.
+  * A list of prices corresponding to the item IDs.
+
+## Storage
+
+The `listings` mapping is used to store the items listed for sale. Each item ID is associated with a price in wei.
+
+```solidity
+mapping(uint256 => uint256) public listings;
+```
+
+* Each unique sample or album ID is mapped to its price in wei.
+
+## Events
+
+The following events are emitted to notify off-chain listeners about important actions:
+
+* `ItemListed(uint256 indexed id, uint256 price)` — Emitted when a sample or album is listed for sale.
+* `ItemSold(uint256 indexed id, address indexed seller, address indexed buyer, uint256 price)` — Emitted when a sample or album is sold.
+
+## Role Management
+
+The contract differentiates between **artists** (users who have already published at least one sample) and **regular users**. Only artists are allowed to list items for sale.
+
+The artist role can be managed via a simple mapping or using the `AccessControl` extension.
+
+```solidity
+mapping(address => bool) public isArtist;
+```
+
+* The `isArtist` mapping will track whether a user has the artist role (i.e., whether they have already minted at least one sample).
+
+## Conclusion
+
+The `Marketplace.sol` smart contract enables a marketplace for users to buy and sell audio samples or albums represented as ERC-1155 SFTs. Artists can list their items for sale, and users can purchase them using Ether.
+
+The contract is designed to be simple, with basic functions for listing, purchasing, and viewing available items. It also includes role-based access control to ensure that only artists can list items for sale.
