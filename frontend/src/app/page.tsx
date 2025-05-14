@@ -1,6 +1,10 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { AnimatedStat } from "@/components/shared/animated-stat";
 import { ArrowRight, Code, Users, Sparkles, Download } from "lucide-react";
 
 // Integration partners data
@@ -42,17 +46,19 @@ const featuredArtists = [
 
 // Network stats data
 const networkStats = [
-  { label: "Samples Minted", value: "50K+" },
-  { label: "Active Producers", value: "2.5K+" },
-  { label: "Trading Volume", value: "1.2M SOL" },
-  { label: "Unique Samples", value: "15K+" }
+  { label: "Samples minted", value: 50000 },
+  { label: "Active producers", value: 2500 },
+  { label: "Album created", value: 1200 },
+  { label: "Unique samples", value: 15000 }
 ];
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-10/12 flex justify-center overflow-hidden py-80">
+      <section className="relative h-10/12 flex justify-center overflow-hidden py-80 pb-96">
         <div className="absolute inset-0" />
         <Image
           src="/hero-bg.png"
@@ -66,13 +72,13 @@ export default function Home() {
             Omegaloops
           </h1>
           <p className="text-xl md:text-2xl max-w-2xl mx-auto text-gray-300">
-            The first decentralized marketplace for music samples on Solana
+            transforming the sample industry by enabling tokenization and trading of audio samples
           </p>
           <div className="flex gap-4 justify-center mt-8">
             <Button size="lg" variant="primary">
               <Download className="mr-2" /> Download
             </Button>
-            <Button variant="primary" size="lg">
+            <Button variant="primary" size="lg" onClick={() => router.push("/marketplace")}>
               Explore marketplace <ArrowRight className="ml-2" />
             </Button>
           </div>
@@ -80,13 +86,12 @@ export default function Home() {
       </section>
 
       {/* Network Stats Section */}
-      <section className="py-12 bg-black/50 backdrop-blur-sm">
+      <section className="py-28 bg-stone-950">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {networkStats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl font-bold text-tertiary mb-2">{stat.value}</div>
-                <div className="text-gray-400">{stat.label}</div>
+                <AnimatedStat end={stat.value} label={stat.label} />
               </div>
             ))}
           </div>
@@ -94,7 +99,7 @@ export default function Home() {
       </section>
 
       {/* Integrations Section */}
-      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <section className="py-20 w-screen bg-stone-950 px-48">
         <h2 className="text-4xl font-bold text-center mb-16 text-white">Seamless Integrations</h2>
         <div className="grid md:grid-cols-3 gap-8">
           {integrations.map((integration, index) => (
@@ -120,7 +125,7 @@ export default function Home() {
       </section>
 
       {/* Featured Artists Section */}
-      <section className="py-20 bg-gradient-to-b from-zinc-900 to-black">
+      <section className="py-20 bg-stone-950">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <h2 className="text-4xl font-bold text-center mb-16 text-white">Featured Artists</h2>
           <div className="grid md:grid-cols-2 gap-8">
