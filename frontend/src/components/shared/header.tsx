@@ -5,7 +5,7 @@ import { Download } from "lucide-react";
 
 const Header = () => {
   return (
-    <header className="w-full h-14 flex flex-row justify-between items-center px-48 py-12">
+    <header className="fixed top-0 z-100 bg-stone-800/80 w-full h-14 flex flex-row justify-between items-center px-48 py-10">
       <Link href="/">
         <h1><strong>Omegaloops</strong></h1>
       </Link>

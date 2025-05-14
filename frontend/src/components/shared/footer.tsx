@@ -2,7 +2,7 @@ import Link from "next/link"
 
 const Footer = () => {
   return (
-    <footer className="w-screen h-72 flex flex-row justify-between bg-stone-700 p-10">
+    <footer className="w-screen h-72 flex flex-row justify-between bg-stone-800 p-10 px-48">
       <div className="w-3/4 flex flex-col justify-start gap-6">
         <div>
           <h1><strong>Omegaloops</strong></h1>
