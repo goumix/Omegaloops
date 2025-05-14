@@ -13,10 +13,10 @@ const fontSans = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: "Omegaloops",
-  description: "A crowdfunding dApp that allows artists to finance their projects",
+  description: "A dApp transforming the sample industry by enabling tokenization and trading of audio samples",
   openGraph:{
     type: "website",
-    locale: "fr_FR",
+    locale: "en_US",
     url: "https://omegaloops.app",
     siteName: "Omegaloops",
   },
@@ -24,11 +24,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head />
       <body
         className={cn(
-          "min-h-screen antialiased bg-stone-950 text-white",
+          "min-h-screen antialiased bg-stone-900 text-white",
           fontSans.className
         )}
       >
