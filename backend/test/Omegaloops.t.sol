@@ -1,111 +1,201 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {SampleToken} from "../src/SampleToken.sol";
+import {Omegaloops} from "../src/Omageloops.sol";
 
-contract SampleTokenTest is Test {
-    SampleToken public sampleToken;
+contract OmegaloopsTest is Test {
+    Omegaloops public omegaloops;
     address public artist;
-    address public user;
-    string public constant SAMPLE_URI = "ipfs://sample";
-    string public constant ALBUM_URI = "ipfs://album";
+    address public buyer;
+
+    // Sample data
+    string public constant ARTIST_NAME = "Test Artist";
+    string public constant SAMPLE_TITLE = "Test Sample";
+    string public constant SAMPLE_CATEGORY = "Test Category";
+    string public constant SAMPLE_DESCRIPTION = "Test Description";
+    uint256 public constant NUMBER_OF_COPIES = 100;
+    uint256 public constant SAMPLE_PRICE = 0.1 ether;
 
     function setUp() public {
         // Deploy the contract
-        sampleToken = new SampleToken();
+        omegaloops = new Omegaloops();
 
         // Create test addresses
         artist = makeAddr("artist");
-        user = makeAddr("user");
+        buyer = makeAddr("buyer");
 
-        // Grant artist role to the artist address
-        sampleToken.setArtistRole(artist);
+        // Fund the buyer with some ETH
+        vm.deal(buyer, 10 ether);
     }
 
-    function test_InitialSetup() public view {
-        // Check if deployer has admin role
-        assertTrue(sampleToken.hasRole(sampleToken.DEFAULT_ADMIN_ROLE(), address(this)));
-
-        // Check if artist has artist role
-        assertTrue(sampleToken.hasRole(sampleToken.ARTIST_ROLE(), artist));
-
-        // Check if user doesn't have artist role
-        assertFalse(sampleToken.hasRole(sampleToken.ARTIST_ROLE(), user));
-    }
-
-    function test_MintSample() public {
+    function test_CreateSample() public {
         vm.startPrank(artist);
 
-        // Mint a sample
-        sampleToken.mintSample(user, 1, SAMPLE_URI);
+        // Create a sample
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            NUMBER_OF_COPIES,
+            SAMPLE_PRICE
+        );
 
-        // Check balance
-        assertEq(sampleToken.balanceOf(user, 0), 1);
+        // Get the created sample
+        Omegaloops.Sample memory sample = omegaloops.getOneSample(0);
 
-        // Check URI
-        assertEq(sampleToken.uri(0), SAMPLE_URI);
+        // Verify sample data
+        assertEq(sample.id, 0);
+        assertEq(sample.addressArtist, artist);
+        assertEq(sample.artist, ARTIST_NAME);
+        assertEq(sample.title, SAMPLE_TITLE);
+        assertEq(sample.category, SAMPLE_CATEGORY);
+        assertEq(sample.description, SAMPLE_DESCRIPTION);
+        assertEq(sample.numberOfCopies, NUMBER_OF_COPIES);
+        assertEq(sample.priceNft, SAMPLE_PRICE);
 
-        // Check artist in storage
-        (string memory uri, address storedArtist) = sampleToken.sampleStorage(0);
-        assertEq(uri, SAMPLE_URI);
-        assertEq(storedArtist, artist);
+        // Verify token balance
+        assertEq(omegaloops.balanceOf(artist, 0), NUMBER_OF_COPIES);
 
         vm.stopPrank();
     }
 
-    function test_MintAlbum() public {
+    function test_BuySample() public {
+        // First create a sample
+        vm.startPrank(artist);
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            NUMBER_OF_COPIES,
+            SAMPLE_PRICE
+        );
+        vm.stopPrank();
+
+        // Now buy the sample
+        vm.startPrank(buyer);
+
+        // Record initial balances
+        uint256 initialArtistBalance = artist.balance;
+        uint256 initialBuyerBalance = buyer.balance;
+
+        // Buy the sample
+        omegaloops.buyNft{value: SAMPLE_PRICE}(0);
+
+        // Verify balances after purchase
+        assertEq(omegaloops.balanceOf(buyer, 0), 1);
+        assertEq(omegaloops.balanceOf(artist, 0), NUMBER_OF_COPIES - 1);
+        assertEq(artist.balance, initialArtistBalance + SAMPLE_PRICE);
+        assertEq(buyer.balance, initialBuyerBalance - SAMPLE_PRICE);
+
+        vm.stopPrank();
+    }
+
+    function testFail_CreateSampleWithZeroCopies() public {
+        vm.startPrank(artist);
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            0, // Zero copies should fail
+            SAMPLE_PRICE
+        );
+        vm.stopPrank();
+    }
+
+    function testFail_CreateSampleWithTooManyCopies() public {
+        vm.startPrank(artist);
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            1001, // More than 1000 copies should fail
+            SAMPLE_PRICE
+        );
+        vm.stopPrank();
+    }
+
+    function testFail_CreateSampleWithZeroPrice() public {
+        vm.startPrank(artist);
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            NUMBER_OF_COPIES,
+            0 // Zero price should fail
+        );
+        vm.stopPrank();
+    }
+
+    function testFail_CreateSampleWithPriceOverOne() public {
+        vm.startPrank(artist);
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            NUMBER_OF_COPIES,
+            1.1 ether // Price over 1 ETH should fail
+        );
+        vm.stopPrank();
+    }
+
+    function testFail_BuySampleWithInsufficientFunds() public {
+        // First create a sample
+        vm.startPrank(artist);
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            NUMBER_OF_COPIES,
+            SAMPLE_PRICE
+        );
+        vm.stopPrank();
+
+        // Try to buy with insufficient funds
+        vm.startPrank(buyer);
+        omegaloops.buyNft{value: SAMPLE_PRICE - 0.01 ether}(0);
+        vm.stopPrank();
+    }
+
+    function test_GetAllSamples() public {
         vm.startPrank(artist);
 
-        // Mint an album
-        sampleToken.mintAlbum(user, 1, ALBUM_URI);
+        // Create multiple samples
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            NUMBER_OF_COPIES,
+            SAMPLE_PRICE
+        );
 
-        // Check balance
-        assertEq(sampleToken.balanceOf(user, 0), 1);
+        omegaloops.createSample(
+            "Artist 2",
+            "Sample 2",
+            "Category 2",
+            "Description 2",
+            NUMBER_OF_COPIES,
+            SAMPLE_PRICE
+        );
 
-        // Check URI
-        assertEq(sampleToken.uri(0), ALBUM_URI);
+        // Get all samples
+        Omegaloops.Sample[] memory allSamples = omegaloops.getAllSamples();
 
-        // Check artist in storage
-        (string memory uri, address storedArtist) = sampleToken.sampleStorage(0);
-        assertEq(uri, ALBUM_URI);
-        assertEq(storedArtist, artist);
+        // Verify the number of samples
+        assertEq(allSamples.length, 2);
 
-        vm.stopPrank();
-    }
-
-    function testFail_MintWithoutArtistRole() public {
-        vm.startPrank(user);
-
-        // This should fail as user doesn't have artist role
-        sampleToken.mintSample(user, 1, SAMPLE_URI);
-
-        vm.stopPrank();
-    }
-
-    function testFail_MintToZeroAddress() public {
-        vm.startPrank(artist);
-
-        // This should fail as we can't mint to zero address
-        sampleToken.mintSample(address(0), 1, SAMPLE_URI);
+        // Verify the second sample's data
+        assertEq(allSamples[1].artist, "Artist 2");
+        assertEq(allSamples[1].title, "Sample 2");
 
         vm.stopPrank();
-    }
-
-    function testFail_MintZeroAmount() public {
-        vm.startPrank(artist);
-
-        // This should fail as amount must be greater than 0
-        sampleToken.mintSample(user, 0, SAMPLE_URI);
-
-        vm.stopPrank();
-    }
-
-    function test_SupportsInterface() public view {
-        // Check if contract supports ERC1155 interface
-        assertTrue(sampleToken.supportsInterface(0xd9b67a26));
-
-        // Check if contract supports AccessControl interface
-        assertTrue(sampleToken.supportsInterface(0x7965db0b));
     }
 }
