@@ -6,12 +6,12 @@ const Footer = () => {
       <div className="w-3/4 flex flex-col justify-start gap-6">
         <div>
           <h1><strong>Omegaloops</strong></h1>
-          <p>Become the producer of your favorite artists !</p>
+          <p>Transforming the sample industry by enabling tokenization and trading of audio samples</p>
         </div>
         <div className="w-full flex flex-row px-4">
           <div className="w-1/6 flex flex-col gap-2">
             <Link href="/">Home</Link>
-            <Link href="/songs">Songs</Link>
+            <Link href="/marketplace">Marketplace</Link>
             <Link href="/whitepaper">Whitepaper</Link>
           </div>
           <div className="w-1/6 flex flex-col gap-2">
@@ -21,7 +21,6 @@ const Footer = () => {
           </div>
           <div className="w-1/6 flex flex-col gap-2">
             <Link href="/">Privacy Policy</Link>
-            <Link href="/streamsincome">Pay an artist</Link>
           </div>
         </div>
       </div>
