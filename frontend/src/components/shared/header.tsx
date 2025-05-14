@@ -25,7 +25,7 @@ const Header = () => {
       </Link>
       <nav className="flex flex-row gap-6 py-1 px-6">
         <Link href="/marketplace" className="hover:text-tertiary transition-colors duration-200">Marketplace</Link>
-        <Link href="/sharedsamples" className="hover:text-tertiary transition-colors duration-200">Shared your samples</Link>
+        <Link href="/sharedsamples" className="hover:text-tertiary transition-colors duration-200">Shared your sample</Link>
         <Link href="/createalbum" className="hover:text-tertiary transition-colors duration-200">Create an album</Link>
         <Link href="/ownsamples" className="hover:text-tertiary transition-colors duration-200">Own samples</Link>
         <Link href="/whitepaper" className="hover:text-tertiary transition-colors duration-200">Whitepaper</Link>

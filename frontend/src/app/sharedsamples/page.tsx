@@ -1,57 +1,85 @@
 import { Card } from "@/components/ui/card";
-import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
-const adivsors = [
-  {
-    name: "Clément Smeets",
-    role: "Blockchain consultant",
-    image: "/Thomas.jpeg",
-    link: "https://www.linkedin.com/in/cl%C3%A9ment-smeets-41b78b336/",
-  },
-  {
-    name: "Goumix",
-    role: "Blockchain developer",
-    image: "/Goumix.jpeg",
-    link: "https://github.com/goumix",
-  },
-];
-
-export default function Home() {
+export default function SharedSamples() {
   return (
-    <div className="h-full">
-      <Image className="absolute bottom-0 z-0" src="/songcrew-image-2-removebg-preview (2).png" alt="Next.js Logo" width={600} height={600} />
-      <div className="flex flex-row items-center px-8">
-        <div className="w-1/3"></div>
-        <div className="w-full h-screen flex flex-col items-center justify-center pb-32 gap-10">
-          <p className="text-center text-lg">Become the producer of your favorite artists !</p>
-          <h1 className="text-8xl text-center"><strong>Welcome to<br/> Omegaloops</strong></h1>
-          <div className="flex flex-row gap-6 z-10">
-            <Card lgPadding>
-              <h1 className="text-4xl text-center"><strong>+ 8</strong></h1>
-              <p className="text-center">projects</p>
-            </Card>
-            <Card lgPadding>
-              <h1 className="text-4xl text-center"><strong>+ 100</strong></h1>
-              <p className="text-center">artists</p>
-            </Card>
-            <Card lgPadding>
-              <h1 className="text-4xl text-center"><strong>+ 30</strong></h1>
-              <p className="text-center">investors</p>
-            </Card>
+    <div className="p-48 px-72 bg-stone-950">
+      <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm px-12">
+        <h1 className="text-3xl font-bold mb-6 text-white">Share your sample</h1>
+          <div className="space-y-2">
+            <Label htmlFor="artist" className="text-white">Artist name</Label>
+            <Input
+              id="artist"
+              placeholder="Enter your artist name"
+              className="text-white"
+              required
+            />
           </div>
-        </div>
-        <div className="w-1/3 flex flex-col gap-2 pb-32">
-          <h1 className="text-2xl text-center"><strong>Our adivsors</strong></h1>
-          {/* {adivsors.map((advisor, index) => (
-              // <CardAdvisor key={index} name={advisor.name} role={advisor.role} image={advisor.image} link={advisor.link} />
-          ))} */}
-        </div>
-      </div>
-      <div className="h-[300px]"></div>
-      {/* <MarqueeDemo /> */}
-      <div className="w-full h-full flex items-center justify-center py-36">
-        {/* <PitchCarousel /> */}
-      </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="title" className="text-white">Sample title</Label>
+            <Input
+              id="title"
+              placeholder="Enter the sample title"
+              className="text-white"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category" className="text-white">Category</Label>
+            <Input
+              id="category"
+              placeholder="Enter the sample category"
+              className="text-white"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description" className="text-white">Description</Label>
+            <Textarea
+              id="description"
+              placeholder="Describe your sample"
+              className="text-white"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="copies" className="text-white">Number of copies (1-10 000)</Label>
+            <Input
+              id="copies"
+              type="number"
+              min="1"
+              max="1000"
+              placeholder="Enter number of copies"
+              className="text-white"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price" className="text-white">Price (ETH)</Label>
+            <Input
+              id="price"
+              type="number"
+              step="0.01"
+              min="0.01"
+              max="1"
+              placeholder="Enter price in ETH"
+              className="text-white"
+              required
+            />
+          </div>
+
+          <Button variant="tertiary">
+            Share Sample
+          </Button>
+      </Card>
     </div>
   );
 }
