@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { ArrowRight, Code, Users, Sparkles } from "lucide-react";
+import { ArrowRight, Code, Users, Sparkles, Download } from "lucide-react";
 
 // Integration partners data
 const integrations = [
@@ -52,28 +52,28 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-10/12 flex justify-center overflow-hidden py-80">
         <div className="absolute inset-0" />
         <Image
           src="/hero-bg.png"
           alt="Music Studio"
           fill
-          className="object-cover opacity-50"
+          className="object-cover opacity-40"
           priority
         />
         <div className="relative z-20 text-center text-white space-y-6 px-4">
-          <h1 className="text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-tertiary to-blue-400">
-            Own Your Sounds <br /> Forever
+          <h1 className="text-9xl font-bold">
+            Omegaloops
           </h1>
           <p className="text-xl md:text-2xl max-w-2xl mx-auto text-gray-300">
             The first decentralized marketplace for music samples on Solana
           </p>
           <div className="flex gap-4 justify-center mt-8">
-            <Button size="lg" className="bg-gradient-to-r from-tertiary to-blue-500 hover:from-tertiary/90 hover:to-blue-600">
-              Start Producing <ArrowRight className="ml-2" />
+            <Button size="lg" variant="primary">
+              <Download className="mr-2" /> Download
             </Button>
-            <Button variant="outline" size="lg" className="border-tertiary/20 hover:bg-tertiary/10">
-              Explore Marketplace
+            <Button variant="primary" size="lg">
+              Explore marketplace <ArrowRight className="ml-2" />
             </Button>
           </div>
         </div>
