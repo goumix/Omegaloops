@@ -96,7 +96,8 @@ export default function SharedSamples() {
   });
 
 
-  const { data: hash, isPending, error, writeContract } = useWriteContract();
+  const { data: hash, isPending, writeContract } = useWriteContract();
+  // const { data: hash, isPending, error, writeContract } = useWriteContract();
 
   const handleSubmit = async () => {
     if (sample.artist && sample.title && sample.category && sample.description && sample.numberOfCopies && sample.priceNft) {
@@ -112,7 +113,8 @@ export default function SharedSamples() {
     }
   }
 
-  const { isLoading: isConfirming, isSuccess, error: errorConfirming } = useWaitForTransactionReceipt({ hash });
+  const { isSuccess } = useWaitForTransactionReceipt({ hash: hash });
+  // const { isLoading: isConfirming, isSuccess, error: errorConfirming } = useWaitForTransactionReceipt({ hash: hash });
 
   useEffect(() => {
     if (isPending) {
