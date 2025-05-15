@@ -6,7 +6,8 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
 import {
-  sepolia
+  sepolia,
+  anvil
 } from 'wagmi/chains';
 import {
   QueryClientProvider,
@@ -15,8 +16,8 @@ import {
 
 const config = getDefaultConfig({
   appName: 'Omegaloops',
-  projectId: 'd9ff2bf7f17a95f6f5a3f4c1785efd1c',
-  chains: [sepolia],
+  projectId: '1f782d71dd4302b613408b0efc533e74',
+  chains: [sepolia, anvil],
   ssr: true,
 });
 
