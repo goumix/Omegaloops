@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title Omegaloops contract
 /// @author Brault Natheo
-/// @notice This contract
+/// @notice This contract is the main contract of the Omegaloops project.
 contract Omegaloops is ERC1155, ReentrancyGuard {
 
   /// @notice The tokenIds of the sample
