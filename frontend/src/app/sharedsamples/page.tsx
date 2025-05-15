@@ -1,14 +1,62 @@
 "use client";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import NotConnected from "@/components/shared/not-connected";
-import { useAccount } from "wagmi";
+import { contractAbi, contractAddress } from "@/constants";
+import { toast } from "sonner";
+import { useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
 
 export default function SharedSamples() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+
+  const [sample, setSample] = useState({
+    artist: "",
+    title: "",
+    category: "",
+    description: "",
+    numberOfCopies: 0,
+    priceNft: 0
+  });
+
+
+  const { data: hash, isPending, error, writeContract } = useWriteContract();
+
+  const handleSubmit = async () => {
+    if (sample.artist && sample.title && sample.category && sample.description && sample.numberOfCopies && sample.priceNft) {
+      writeContract({
+        address: contractAddress,
+        abi: contractAbi,
+        functionName: 'createSample',
+        account: address,
+        args: [sample.artist, sample.title, sample.category, sample.description, sample.numberOfCopies, sample.priceNft],
+      })
+    } else {
+      toast("Please enter a correct address")
+    }
+  }
+
+  const { isLoading: isConfirming, isSuccess, error: errorConfirming } = useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    if (isPending) {
+      toast("Transaction pending");
+    }
+    if (isSuccess) {
+      toast("Project created");
+      setSample({
+        artist: "",
+        title: "",
+        category: "",
+        description: "",
+        numberOfCopies: 0,
+        priceNft: 0
+      });
+    }
+  }, [isSuccess, isPending])
 
   return (
     <div className="p-48 px-72 bg-stone-950">
@@ -23,6 +71,8 @@ export default function SharedSamples() {
                 placeholder="Enter your artist name"
                 className="text-white"
                 required
+                value={sample.artist}
+                onChange={(e) => setSample({ ...sample, artist: e.target.value })}
               />
             </div>
 
@@ -33,6 +83,8 @@ export default function SharedSamples() {
                 placeholder="Enter the sample title"
                 className="text-white"
                 required
+                value={sample.title}
+                onChange={(e) => setSample({ ...sample, title: e.target.value })}
               />
             </div>
 
@@ -43,6 +95,8 @@ export default function SharedSamples() {
                 placeholder="Enter the sample category"
                 className="text-white"
                 required
+                value={sample.category}
+                onChange={(e) => setSample({ ...sample, category: e.target.value })}
               />
             </div>
 
@@ -53,6 +107,8 @@ export default function SharedSamples() {
                 placeholder="Describe your sample"
                 className="text-white"
                 required
+                value={sample.description}
+                onChange={(e) => setSample({ ...sample, description: e.target.value })}
               />
             </div>
 
@@ -66,6 +122,8 @@ export default function SharedSamples() {
                 placeholder="Enter number of copies"
                 className="text-white"
                 required
+                value={sample.numberOfCopies}
+                onChange={(e) => setSample({ ...sample, numberOfCopies: parseInt(e.target.value) })}
               />
             </div>
 
@@ -80,10 +138,12 @@ export default function SharedSamples() {
                 placeholder="Enter price in ETH"
                 className="text-white"
                 required
+                value={sample.priceNft}
+                onChange={(e) => setSample({ ...sample, priceNft: parseFloat(e.target.value) })}
               />
             </div>
 
-            <Button variant="tertiary">
+            <Button variant="tertiary" onClick={handleSubmit} disabled={isPending}>
               Share Sample
             </Button>
           </>
