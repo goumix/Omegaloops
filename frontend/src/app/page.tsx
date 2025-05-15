@@ -21,26 +21,8 @@ const integrations = [
   },
   {
     name: "Logic Pro",
-    logo: "/logic-logo.png",
+    logo: "/fl-studio.png",
     description: "Full compatibility with Logic Pro's sample library"
-  }
-];
-
-// Featured artists data
-const featuredArtists = [
-  {
-    name: "Sarah Producer",
-    role: "Electronic Music Producer",
-    image: "/artist1.jpg",
-    quote: "Omegaloops revolutionized how I share and monetize my samples",
-    stats: "1.2k samples sold"
-  },
-  {
-    name: "Mike Beatmaker",
-    role: "Hip-Hop Producer",
-    image: "/artist2.jpg",
-    quote: "The best platform for authentic sample trading",
-    stats: "800+ samples created"
   }
 ];
 
