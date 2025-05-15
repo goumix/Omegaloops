@@ -1,57 +1,159 @@
+'use client';
+import { useState, useEffect } from "react";
+import { contractAddress, contractAbi } from "@/constants";
+import { publicClient } from "@/utils/client";
+import { parseAbiItem } from "viem";
 import { Card } from "@/components/ui/card";
-import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, Filter } from "lucide-react";
 
-const adivsors = [
-  {
-    name: "Clément Smeets",
-    role: "Blockchain consultant",
-    image: "/Thomas.jpeg",
-    link: "https://www.linkedin.com/in/cl%C3%A9ment-smeets-41b78b336/",
-  },
-  {
-    name: "Goumix",
-    role: "Blockchain developer",
-    image: "/Goumix.jpeg",
-    link: "https://github.com/goumix",
-  },
-];
+interface SampleDetails {
+  title: string;
+  artist: string;
+  category: string;
+  description: string;
+  numberOfCopies: bigint;
+  priceNft: bigint;
+}
 
-export default function Home() {
+interface Sample {
+  args: {
+    id: bigint;
+    addressArtist: string;
+    artist: string;
+    title: string;
+    category: string;
+    description: string;
+    numberOfCopies: bigint;
+    priceNft: bigint;
+  };
+  details: SampleDetails;
+}
+
+export default function Marketplace() {
+  const [samples, setSamples] = useState<Sample[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const getSamples = async () => {
+    const depositEvents = await publicClient.getLogs({
+      address: contractAddress,
+      event: parseAbiItem('event SampleCreated(uint256 id,address addressArtist,string artist,string title,string category,string description,uint256 numberOfCopies,uint256 priceNft)'),
+      fromBlock: BigInt(0),
+      toBlock: 'latest'
+    });
+
+    const eventsWithDetails = await Promise.all(depositEvents.map(async (event) => {
+      const data = await publicClient.readContract({
+        abi: contractAbi,
+        address: contractAddress,
+        functionName: 'getOneSample',
+        args: [event.args.id]
+      }) as SampleDetails;
+
+      return {
+        ...event,
+        details: data
+      } as Sample;
+    }));
+
+    setSamples(eventsWithDetails);
+  };
+
+  useEffect(() => {
+    getSamples();
+  }, []);
+
+  const filteredSamples = samples.filter((sample) => {
+    const matchesSearch =
+      sample.details.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sample.details.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sample.details.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCategory = selectedCategory ? sample.details.category === selectedCategory : true;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  const categories = Array.from(new Set(samples.map(sample => sample.details.category)));
+
   return (
-    <div className="h-full">
-      <Image className="absolute bottom-0 z-0" src="/songcrew-image-2-removebg-preview (2).png" alt="Next.js Logo" width={600} height={600} />
-      <div className="flex flex-row items-center px-8">
-        <div className="w-1/3"></div>
-        <div className="w-full h-screen flex flex-col items-center justify-center pb-32 gap-10">
-          <p className="text-center text-lg">Become the producer of your favorite artists !</p>
-          <h1 className="text-8xl text-center"><strong>Welcome to<br/> Omegaloops</strong></h1>
-          <div className="flex flex-row gap-6 z-10">
-            <Card lgPadding>
-              <h1 className="text-4xl text-center"><strong>+ 8</strong></h1>
-              <p className="text-center">projects</p>
-            </Card>
-            <Card lgPadding>
-              <h1 className="text-4xl text-center"><strong>+ 100</strong></h1>
-              <p className="text-center">artists</p>
-            </Card>
-            <Card lgPadding>
-              <h1 className="text-4xl text-center"><strong>+ 30</strong></h1>
-              <p className="text-center">investors</p>
-            </Card>
+    <div className="px-24 pt-36 min-h-screen bg-stone-950">
+      <div className="flex flex-col space-y-6 mb-8">
+        <div className="flex items-center space-x-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Input
+              type="text"
+              placeholder="Search samples..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-zinc-900/50 border-zinc-800 text-white"
+            />
           </div>
+          <Button
+            variant="outline"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="bg-zinc-900/50 border-zinc-800 text-white hover:bg-zinc-800"
+          >
+            <Filter size={20} className="mr-2" />
+            Filter
+          </Button>
         </div>
-        <div className="w-1/3 flex flex-col gap-2 pb-32">
-          <h1 className="text-2xl text-center"><strong>Our adivsors</strong></h1>
-          {/* {adivsors.map((advisor, index) => (
-              // <CardAdvisor key={index} name={advisor.name} role={advisor.role} image={advisor.image} link={advisor.link} />
-          ))} */}
-        </div>
+
+        {isFilterOpen && (
+          <div className="flex flex-wrap gap-2 p-4 bg-zinc-900/50 border border-zinc-800 rounded-lg">
+            <Button
+              variant={selectedCategory === null ? "default" : "outline"}
+              onClick={() => setSelectedCategory(null)}
+              className="bg-zinc-900/50 border-zinc-800 text-white hover:bg-zinc-800"
+            >
+              All
+            </Button>
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                onClick={() => setSelectedCategory(category)}
+                className="bg-zinc-900/50 border-zinc-800 text-white hover:bg-zinc-800"
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
-      <div className="h-[300px]"></div>
-      {/* <MarqueeDemo /> */}
-      <div className="w-full h-full flex items-center justify-center py-36">
-        {/* <PitchCarousel /> */}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-24">
+        {filteredSamples.map((sample, index) => (
+          <Card key={index} className="bg-zinc-900/50 border-zinc-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl text-white font-bold">{sample.details.title}</h2>
+                <span className="px-3 py-1 text-sm font-semibold text-white bg-tertiary rounded-full">
+                  {sample.details.category}
+                </span>
+              </div>
+
+              <p className="text-white mb-2">by {sample.details.artist}</p>
+
+              <p className="text-white mb-4 line-clamp-2">{sample.details.description}</p>
+
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-300">Copies:</span>
+                  <span className="font-semibold">{sample.details.numberOfCopies}</span>
+                </div>
+                <div className="text-lg font-bold text-tertiary">
+                  {Number(sample.details.priceNft)} ETH
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
-  );
+  )
 }
