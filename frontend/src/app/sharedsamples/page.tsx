@@ -10,6 +10,79 @@ import { contractAbi, contractAddress } from "@/constants";
 import { toast } from "sonner";
 import { useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
 
+const categories: string[] = [
+  "Drum & bass",
+  "Dubstep",
+  "Grime",
+  "Jersey Club",
+  "Jungle",
+  "Acid House",
+  "Afro House",
+  "Afrobeats",
+  "Amapiano",
+  "Deep House",
+  "Disco",
+  "Garage",
+  "Hardstyle",
+  "House",
+  "Minimal",
+  "Progressive House",
+  "Psytrance",
+  "Slap House",
+  "Tech House",
+  "Trance",
+  "Ambient",
+  "Chill-Out",
+  "Downtempo",
+  "Electro",
+  "IDM",
+  "Trip Hop",
+  "Boom bap",
+  "Drill",
+  "Lo-Fi",
+  "Phonk",
+  "Reggaeton",
+  "R&B",
+  "Trap",
+  "West Cost",
+  "African",
+  "Asian",
+  "Bossa Nova",
+  "Brazilian",
+  "Caribbean",
+  "Cuban",
+  "Dancehall",
+  "Indian",
+  "Latin American",
+  "Middle Eastern",
+  "Reggae",
+  "Blues",
+  "Classic R&B",
+  "Classical",
+  "Country",
+  "Folk",
+  "Funk",
+  "Gospel",
+  "Indie Rock",
+  "Jazz",
+  "Metal",
+  "Post-Punk",
+  "Punk",
+  "Rock",
+  "Soul",
+  "EDM",
+  "Electropop",
+  "Future House",
+  "Hyperpop",
+  "K-Pop",
+  "Moombahton",
+  "Pop",
+  "Synthwave",
+  "Tropical House",
+  "Cinematic",
+  "Video Game",
+]
+
 export default function SharedSamples() {
   const { isConnected, address } = useAccount();
 
@@ -90,14 +163,17 @@ export default function SharedSamples() {
 
             <div className="space-y-2">
               <Label htmlFor="category" className="text-white">Category</Label>
-              <Input
-                id="category"
-                placeholder="Enter the sample category"
-                className="text-white"
-                required
-                value={sample.category}
-                onChange={(e) => setSample({ ...sample, category: e.target.value })}
-              />
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category, index) => (
+                  <div
+                  key={index}
+                  className={`w-auto border py-1 px-2 rounded cursor-pointer ${sample.category === category ? 'border-tertiary' : 'border-white'}`}
+                  onClick={() => setSample({ ...sample, category: category })}
+                >
+                  <p className={`${sample.category === category ? 'text-tertiary' : 'text-white'}`}>{category}</p>
+                </div>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
