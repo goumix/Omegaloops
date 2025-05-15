@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Omegaloops} from "../src/Omageloops.sol";
+import {Omegaloops} from "../src/Omegaloops.sol";
 
 contract OmegaloopsTest is Test {
     Omegaloops public omegaloops;
