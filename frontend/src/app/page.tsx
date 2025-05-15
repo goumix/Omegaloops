@@ -12,17 +12,17 @@ const integrations = [
   {
     name: "FL Studio",
     logo: "/fl-studio.png",
-    description: "Direct integration with FL Studio for seamless sample management"
+    description: "Direct integration with FL Studio for seamless sample management (coming soon)"
   },
   {
     name: "Ableton Live",
     logo: "/ableton-live.png",
-    description: "Native support for Omegaloops samples in Ableton Live"
+    description: "Native support for Omegaloops samples in Ableton Live (coming soon)"
   },
   {
     name: "Logic Pro",
     logo: "/fl-studio.png",
-    description: "Full compatibility with Logic Pro's sample library"
+    description: "Full compatibility with Logic Pro's sample library (coming soon)"
   }
 ];
 
@@ -183,7 +183,7 @@ export default function Home() {
               <p className="text-gray-400 mb-4">
                 Integrate Omegaloops into your applications with our comprehensive SDK
               </p>
-              <Button variant="outline" className="w-full border-tertiary/20">View Documentation</Button>
+              <Button variant="outline" className="w-full border-tertiary/20" disabled>View Documentation</Button>
             </CardContent>
           </Card>
           <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm">
@@ -209,7 +209,7 @@ export default function Home() {
               <p className="text-gray-400 mb-4">
                 Join our developer community and contribute to the future of music
               </p>
-              <Button variant="outline" className="w-full border-tertiary/20">Join Discord</Button>
+              <Button variant="outline" className="w-full border-tertiary/20" disabled>Join Discord</Button>
             </CardContent>
           </Card>
         </div>
