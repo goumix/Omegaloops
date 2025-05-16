@@ -21,7 +21,7 @@ const integrations = [
   },
   {
     name: "Logic Pro",
-    logo: "/fl-studio.png",
+    logo: "/logic-pro.png",
     description: "Full compatibility with Logic Pro's sample library (coming soon)"
   }
 ];
