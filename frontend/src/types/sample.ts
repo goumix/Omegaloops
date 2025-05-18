@@ -1,5 +1,5 @@
 export interface Sample {
-  id: number;
+  id?: number;
   artist: string;
   title: string;
   category: string;

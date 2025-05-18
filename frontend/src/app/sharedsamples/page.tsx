@@ -10,11 +10,12 @@ import { contractAbi, contractAddress } from "@/constants";
 import { toast } from "sonner";
 import { useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { categories } from "@/data";
+import { Sample } from "@/types";
 
 export default function SharedSamples() {
   const { isConnected, address } = useAccount();
 
-  const [sample, setSample] = useState({
+  const [sample, setSample] = useState<Sample>({
     artist: "",
     title: "",
     category: "",
@@ -95,17 +96,19 @@ export default function SharedSamples() {
               <Label htmlFor="category" className="text-white">Category</Label>
               <div className="flex flex-wrap gap-2">
                 {categories.map((category, index) => (
-                  <div key={index} className="gap-12">
+                  <div key={index} className="flex flex-col gap-2">
                     <p className="text-white">{category.name}</p>
-                    {category.subcategories.map((subcategory, index) => (
-                      <div
-                        key={index}
-                        className={`w-auto border py-1 px-2 rounded cursor-pointer ${sample.category === category.name && sample.subcategory === subcategory ? 'border-tertiary' : 'border-white'}`}
-                        onClick={() => setSample({ ...sample, category: category.name, subcategory: subcategory })}
-                      >
-                        <p className={`${sample.category === category.name && sample.subcategory === subcategory ? 'text-tertiary' : 'text-white'}`}>{subcategory}</p>
-                      </div>
-                    ))}
+                    <div className="flex flex-wrap gap-2">
+                      {category.subcategories.map((subcategory, index) => (
+                        <div
+                          key={index}
+                          className={`w-auto border py-1 px-2 rounded cursor-pointer ${sample.category === subcategory ? 'border-tertiary' : 'border-white'}`}
+                          onClick={() => setSample({ ...sample, category: subcategory})}
+                        >
+                          <p className={`${sample.category === subcategory ? 'text-tertiary' : 'text-white'}`}>{subcategory}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
