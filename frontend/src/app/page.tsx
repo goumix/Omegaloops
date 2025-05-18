@@ -1,42 +1,12 @@
 "use client";
 
-import { Integration, Stat } from "@/types";
+import { integrations, networkStats } from "@/data";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AnimatedStat } from "@/components/shared/animated-stat";
 import { ArrowRight, Code, Users, Sparkles, Download } from "lucide-react";
-
-// Integration partners data
-const integrations: Integration[] = [
-  {
-    id: 1,
-    name: "FL Studio",
-    logo: "/fl-studio.png",
-    description: "Direct integration with FL Studio for seamless sample management (coming soon)"
-  },
-  {
-    id: 2,
-    name: "Ableton Live",
-    logo: "/ableton-live.png",
-    description: "Native support for Omegaloops samples in Ableton Live (coming soon)"
-  },
-  {
-    id: 3,
-    name: "Logic Pro",
-    logo: "/logic-pro.png",
-    description: "Full compatibility with Logic Pro's sample library (coming soon)"
-  }
-];
-
-// Network stats data
-const networkStats: Stat[] = [
-  { id: 1, label: "Samples minted", value: 50000 },
-  { id: 2, label: "Active producers", value: 2500 },
-  { id: 3, label: "Album created", value: 1200 },
-  { id: 4, label: "Unique samples", value: 15000 }
-];
 
 export default function Home() {
   const router = useRouter();
