@@ -25,6 +25,7 @@ contract Omegaloops is ERC1155, ReentrancyGuard {
   /// @param description The description of the sample
   /// @param numberOfCopies The number of copies of the semi-fungible token
   /// @param priceNft The ethers price of the semi-fungible token
+  /// @param ipfsHash The IPFS hash of the sample file
   struct Sample {
     uint256 id;
     address addressArtist;
@@ -34,6 +35,7 @@ contract Omegaloops is ERC1155, ReentrancyGuard {
     string description;
     uint256 numberOfCopies;
     uint256 priceNft;
+    string ipfsHash;
   }
 
 //   struct Album {
@@ -55,7 +57,7 @@ contract Omegaloops is ERC1155, ReentrancyGuard {
   mapping(uint => address[]) private ownersOfSample;
 
   /// @notice An event emitted when a sample is created
-  event SampleCreated(uint256 id,address addressArtist,string artist,string title,string category,string description,uint256 numberOfCopies,uint256 priceNft);
+  event SampleCreated(uint256 id,address addressArtist,string artist,string title,string category,string description,uint256 numberOfCopies,uint256 priceNft,string ipfsHash);
   /// @notice An event emitted when a album is created
 //   event AlbumCreated(uint256 id, address artistAddress, string artist, string titleAlbum, string descriptionAlbum, uint256 numberOfSamples, Sample[] idOfSamples);
   /// @notice An event emitted when a project is bought
@@ -121,20 +123,22 @@ contract Omegaloops is ERC1155, ReentrancyGuard {
     string memory _category,
     string memory _description,
     uint _numberOfCopies,
-    uint256 _priceNft
+    uint256 _priceNft,
+    string memory _ipfsHash
   ) public {
     require(msg.sender != address(0), "ERC1155: mint to the zero address");
     require(_numberOfCopies > 0, "ERC1155: number of copies must be greater than 0");
     require(_numberOfCopies <= 1000, "ERC1155: number of copies must be less than or equal to 1000");
     require(_priceNft > 0, "ERC1155: price of the sample must be greater than 0");
-    require(_priceNft <= 1, "ERC1155: price of the sample must be less than or equal to 1");
+    require(_priceNft <= 1 ether, "ERC1155: price of the sample must be less than or equal to 1 ether");
     require(samples.length < 10000, "ERC1155: number of samples must be less than 10000");
+    require(bytes(_ipfsHash).length > 0, "ERC1155: IPFS hash cannot be empty");
 
     uint256 newItemId = _tokenSampleIds;
-    samples.push(Sample(newItemId, msg.sender, _artist, _title, _category, _description, _numberOfCopies, _priceNft));
+    samples.push(Sample(newItemId, msg.sender, _artist, _title, _category, _description, _numberOfCopies, _priceNft, _ipfsHash));
     _mint(msg.sender, newItemId, _numberOfCopies, "");
 
-    emit SampleCreated(newItemId, msg.sender, _artist, _title, _category, _description, _numberOfCopies, _priceNft);
+    emit SampleCreated(newItemId, msg.sender, _artist, _title, _category, _description, _numberOfCopies, _priceNft, _ipfsHash);
     _tokenSampleIds++;
   }
 

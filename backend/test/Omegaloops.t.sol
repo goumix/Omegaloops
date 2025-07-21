@@ -16,6 +16,7 @@ contract OmegaloopsTest is Test {
     string public constant SAMPLE_DESCRIPTION = "Test Description";
     uint256 public constant NUMBER_OF_COPIES = 100;
     uint256 public constant SAMPLE_PRICE = 0.1 ether;
+    string public constant SAMPLE_IPFS_HASH = "QmTestHashForSampleVideo123456789";
 
     function setUp() public {
         // Deploy the contract
@@ -39,7 +40,8 @@ contract OmegaloopsTest is Test {
             SAMPLE_CATEGORY,
             SAMPLE_DESCRIPTION,
             NUMBER_OF_COPIES,
-            SAMPLE_PRICE
+            SAMPLE_PRICE,
+            SAMPLE_IPFS_HASH
         );
 
         // Get the created sample
@@ -54,6 +56,7 @@ contract OmegaloopsTest is Test {
         assertEq(sample.description, SAMPLE_DESCRIPTION);
         assertEq(sample.numberOfCopies, NUMBER_OF_COPIES);
         assertEq(sample.priceNft, SAMPLE_PRICE);
+        assertEq(sample.ipfsHash, SAMPLE_IPFS_HASH);
 
         // Verify token balance
         assertEq(omegaloops.balanceOf(artist, 0), NUMBER_OF_COPIES);
@@ -70,29 +73,34 @@ contract OmegaloopsTest is Test {
             SAMPLE_CATEGORY,
             SAMPLE_DESCRIPTION,
             NUMBER_OF_COPIES,
-            SAMPLE_PRICE
+            SAMPLE_PRICE,
+            SAMPLE_IPFS_HASH
         );
         vm.stopPrank();
 
         // Now buy the sample
         vm.startPrank(buyer);
 
-        // Record initial balances
         uint256 initialArtistBalance = artist.balance;
         uint256 initialBuyerBalance = buyer.balance;
 
-        // Buy the sample
         omegaloops.buyNft{value: SAMPLE_PRICE}(0);
 
-        // Verify balances after purchase
+        // Verify ownership transfer
         assertEq(omegaloops.balanceOf(buyer, 0), 1);
-        assertEq(omegaloops.balanceOf(artist, 0), NUMBER_OF_COPIES - 1);
+
+        // Verify payment transfer
         assertEq(artist.balance, initialArtistBalance + SAMPLE_PRICE);
         assertEq(buyer.balance, initialBuyerBalance - SAMPLE_PRICE);
+
+        // Verify sample copy count decreased
+        Omegaloops.Sample memory sample = omegaloops.getOneSample(0);
+        assertEq(sample.numberOfCopies, NUMBER_OF_COPIES - 1);
 
         vm.stopPrank();
     }
 
+    // Test failure cases
     function testFail_CreateSampleWithZeroCopies() public {
         vm.startPrank(artist);
         omegaloops.createSample(
@@ -101,7 +109,8 @@ contract OmegaloopsTest is Test {
             SAMPLE_CATEGORY,
             SAMPLE_DESCRIPTION,
             0, // Zero copies should fail
-            SAMPLE_PRICE
+            SAMPLE_PRICE,
+            SAMPLE_IPFS_HASH
         );
         vm.stopPrank();
     }
@@ -114,7 +123,8 @@ contract OmegaloopsTest is Test {
             SAMPLE_CATEGORY,
             SAMPLE_DESCRIPTION,
             1001, // More than 1000 copies should fail
-            SAMPLE_PRICE
+            SAMPLE_PRICE,
+            SAMPLE_IPFS_HASH
         );
         vm.stopPrank();
     }
@@ -127,7 +137,8 @@ contract OmegaloopsTest is Test {
             SAMPLE_CATEGORY,
             SAMPLE_DESCRIPTION,
             NUMBER_OF_COPIES,
-            0 // Zero price should fail
+            0, // Zero price should fail
+            SAMPLE_IPFS_HASH
         );
         vm.stopPrank();
     }
@@ -140,27 +151,9 @@ contract OmegaloopsTest is Test {
             SAMPLE_CATEGORY,
             SAMPLE_DESCRIPTION,
             NUMBER_OF_COPIES,
-            1.1 ether // Price over 1 ETH should fail
+            1.1 ether, // Price over 1 ETH should fail
+            SAMPLE_IPFS_HASH
         );
-        vm.stopPrank();
-    }
-
-    function testFail_BuySampleWithInsufficientFunds() public {
-        // First create a sample
-        vm.startPrank(artist);
-        omegaloops.createSample(
-            ARTIST_NAME,
-            SAMPLE_TITLE,
-            SAMPLE_CATEGORY,
-            SAMPLE_DESCRIPTION,
-            NUMBER_OF_COPIES,
-            SAMPLE_PRICE
-        );
-        vm.stopPrank();
-
-        // Try to buy with insufficient funds
-        vm.startPrank(buyer);
-        omegaloops.buyNft{value: SAMPLE_PRICE - 0.01 ether}(0);
         vm.stopPrank();
     }
 
@@ -174,28 +167,60 @@ contract OmegaloopsTest is Test {
             SAMPLE_CATEGORY,
             SAMPLE_DESCRIPTION,
             NUMBER_OF_COPIES,
-            SAMPLE_PRICE
+            SAMPLE_PRICE,
+            SAMPLE_IPFS_HASH
         );
 
         omegaloops.createSample(
             "Artist 2",
             "Sample 2",
-            "Category 2",
-            "Description 2",
-            NUMBER_OF_COPIES,
-            SAMPLE_PRICE
+            "Electronic",
+            "Second test sample",
+            50,
+            0.05 ether,
+            "QmSecondSampleHash"
         );
+
+        vm.stopPrank();
 
         // Get all samples
         Omegaloops.Sample[] memory allSamples = omegaloops.getAllSamples();
 
-        // Verify the number of samples
+        // Verify we have 2 samples
         assertEq(allSamples.length, 2);
 
-        // Verify the second sample's data
+        // Verify first sample
+        assertEq(allSamples[0].artist, ARTIST_NAME);
+        assertEq(allSamples[0].title, SAMPLE_TITLE);
+
+        // Verify second sample
         assertEq(allSamples[1].artist, "Artist 2");
         assertEq(allSamples[1].title, "Sample 2");
+    }
 
+    function testFail_BuyNonExistentSample() public {
+        vm.startPrank(buyer);
+        omegaloops.buyNft{value: SAMPLE_PRICE}(999); // Non-existent sample ID
+        vm.stopPrank();
+    }
+
+    function testFail_BuyWithInsufficientFunds() public {
+        // First create a sample
+        vm.startPrank(artist);
+        omegaloops.createSample(
+            ARTIST_NAME,
+            SAMPLE_TITLE,
+            SAMPLE_CATEGORY,
+            SAMPLE_DESCRIPTION,
+            NUMBER_OF_COPIES,
+            SAMPLE_PRICE,
+            SAMPLE_IPFS_HASH
+        );
+        vm.stopPrank();
+
+        // Try to buy with insufficient funds
+        vm.startPrank(buyer);
+        omegaloops.buyNft{value: 0.05 ether}(0); // Less than SAMPLE_PRICE
         vm.stopPrank();
     }
 }
