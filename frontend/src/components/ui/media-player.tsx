@@ -111,33 +111,9 @@ export function MediaPlayer({ ipfsHash, fileType, fileName, className }: MediaPl
 
   return (
     <Card className={cn("bg-zinc-800/50 border-zinc-700 p-4", className)}>
-      {/* Hidden media elements */}
-      {isVideo && (
-        <video
-          ref={videoRef}
-          src={fileUrl}
-          className="hidden"
-          preload="metadata"
-        />
-      )}
-
-      {isAudio && (
-        <audio
-          ref={audioRef}
-          src={fileUrl}
-          className="hidden"
-          preload="metadata"
-        />
-      )}
 
       {/* Player UI */}
       <div className="space-y-3">
-        {/* File name */}
-        {fileName && (
-          <div className="text-sm text-zinc-300 font-medium truncate">
-            {fileName}
-          </div>
-        )}
 
         {/* Controls */}
         <div className="flex items-center space-x-3">
@@ -170,23 +146,6 @@ export function MediaPlayer({ ipfsHash, fileType, fileName, className }: MediaPl
               />
             </div>
           )}
-
-          {/* Volume control */}
-          {!isLoading && !error && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleMute}
-              className="flex-shrink-0"
-            >
-              {isMuted ? (
-                <VolumeX className="w-4 h-4" />
-              ) : (
-                <Volume2 className="w-4 h-4" />
-              )}
-            </Button>
-          )}
-
           {/* Time display */}
           {!isLoading && !error && (
             <div className="flex items-center space-x-2 text-sm text-zinc-400 min-w-0">
