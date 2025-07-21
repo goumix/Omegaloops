@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "./button";
 import { Card } from "./card";
-import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MediaPlayerProps {
@@ -12,9 +12,8 @@ interface MediaPlayerProps {
   className?: string;
 }
 
-export function MediaPlayer({ ipfsHash, fileType, fileName, className }: MediaPlayerProps) {
+export function MediaPlayer({ fileType, className }: MediaPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +24,6 @@ export function MediaPlayer({ ipfsHash, fileType, fileName, className }: MediaPl
 
   const isVideo = fileType.startsWith('video/');
   const isAudio = fileType.startsWith('audio/');
-  const fileUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
 
   useEffect(() => {
     const mediaElement = isVideo ? videoRef.current : audioRef.current;
@@ -79,14 +77,6 @@ export function MediaPlayer({ ipfsHash, fileType, fileName, className }: MediaPl
       console.error('Error playing media:', error);
       setError("Failed to play media file");
     }
-  };
-
-  const toggleMute = () => {
-    const mediaElement = isVideo ? videoRef.current : audioRef.current;
-    if (!mediaElement) return;
-
-    mediaElement.muted = !isMuted;
-    setIsMuted(!isMuted);
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
