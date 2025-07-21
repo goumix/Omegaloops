@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "./button";
 import { Card } from "./card";
-import { Play, Pause} from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MediaPlayerProps {
@@ -12,7 +12,7 @@ interface MediaPlayerProps {
   className?: string;
 }
 
-export function MediaPlayer({ fileType, className }: MediaPlayerProps) {
+export function MediaPlayer({ ipfsHash, fileType, className }: MediaPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -24,6 +24,7 @@ export function MediaPlayer({ fileType, className }: MediaPlayerProps) {
 
   const isVideo = fileType.startsWith('video/');
   const isAudio = fileType.startsWith('audio/');
+  const fileUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
 
   useEffect(() => {
     const mediaElement = isVideo ? videoRef.current : audioRef.current;
@@ -101,6 +102,24 @@ export function MediaPlayer({ fileType, className }: MediaPlayerProps) {
 
   return (
     <Card className={cn("bg-zinc-800/50 border-zinc-700 p-4", className)}>
+      {/* Hidden media elements */}
+      {isVideo && (
+        <video
+          ref={videoRef}
+          src={fileUrl}
+          className="hidden"
+          preload="metadata"
+        />
+      )}
+
+      {isAudio && (
+        <audio
+          ref={audioRef}
+          src={fileUrl}
+          className="hidden"
+          preload="metadata"
+        />
+      )}
 
       {/* Player UI */}
       <div className="space-y-3">
@@ -136,6 +155,7 @@ export function MediaPlayer({ fileType, className }: MediaPlayerProps) {
               />
             </div>
           )}
+
           {/* Time display */}
           {!isLoading && !error && (
             <div className="flex items-center space-x-2 text-sm text-zinc-400 min-w-0">
