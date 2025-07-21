@@ -6,6 +6,7 @@ import { parseAbiItem } from "viem";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { MediaPlayer } from "@/components/ui/media-player";
 import { Search, Filter } from "lucide-react";
 
 interface SampleDetails {
@@ -15,6 +16,7 @@ interface SampleDetails {
   description: string;
   numberOfCopies: bigint;
   priceNft: bigint;
+  ipfsHash: string;
 }
 
 interface Sample {
@@ -27,6 +29,7 @@ interface Sample {
     description: string;
     numberOfCopies: bigint;
     priceNft: bigint;
+    ipfsHash: string;
   };
   details: SampleDetails;
 }
@@ -40,7 +43,7 @@ export default function Marketplace() {
   const getSamples = async () => {
     const depositEvents = await publicClient.getLogs({
       address: contractAddress,
-      event: parseAbiItem('event SampleCreated(uint256 id,address addressArtist,string artist,string title,string category,string description,uint256 numberOfCopies,uint256 priceNft)'),
+      event: parseAbiItem('event SampleCreated(uint256 id,address addressArtist,string artist,string title,string category,string description,uint256 numberOfCopies,uint256 priceNft,string ipfsHash)'),
       fromBlock: BigInt(0),
       toBlock: 'latest'
     });
@@ -78,6 +81,25 @@ export default function Marketplace() {
   });
 
   const categories = Array.from(new Set(samples.map(sample => sample.details.category)));
+
+  // Helper function to determine file type based on sample context
+  const getFileType = (sample: Sample): string => {
+    // In a real implementation, you might want to fetch metadata from IPFS or store file type in the contract
+    // For now, we'll make educated guesses based on category or default to video/mp4
+    const category = sample.details.category.toLowerCase();
+
+    // Audio categories might indicate mp3 files
+    if (category.includes('audio') || category.includes('music') || category.includes('sound')) {
+      return 'audio/mpeg';
+    }
+
+    // Default to video for visual/cinematic content
+    return 'video/mp4';
+  };
+
+  const hasMediaFile = (sample: Sample): boolean => {
+    return !!(sample.details.ipfsHash && sample.details.ipfsHash.trim() !== '');
+  };
 
   return (
     <div className="px-24 pt-36 min-h-screen bg-stone-950">
@@ -141,10 +163,21 @@ export default function Marketplace() {
 
               <p className="text-white mb-4 line-clamp-2">{sample.details.description}</p>
 
+              {/* Media Player */}
+              {hasMediaFile(sample) && (
+                <div className="mb-4">
+                                     <MediaPlayer
+                     ipfsHash={sample.details.ipfsHash}
+                     fileType={getFileType(sample)}
+                     fileName={`${sample.details.title} - ${sample.details.artist}`}
+                   />
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-300">Copies:</span>
-                  <span className="font-semibold">{sample.details.numberOfCopies}</span>
+                  <span className="font-semibold text-white">{Number(sample.details.numberOfCopies)}</span>
                 </div>
                 <div className="text-lg font-bold text-tertiary">
                   {Number(sample.details.priceNft)} ETH

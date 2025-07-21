@@ -7,4 +7,7 @@ export interface Sample {
   numberOfCopies: number;
   priceNft: number;
   ipfsHash?: string;
+  fileName?: string;
+  fileSize?: number;
+  fileType?: string;
 }
