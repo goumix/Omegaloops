@@ -1,4 +1,4 @@
-export const contractAddress = "0xA6Cc38B35513Efdcf8F03E0c44034fB3A05fbE0F";
+export const contractAddress = "0xA1eC7b99A2723CE50eC3C0263C6e6Df2065F0326";
 export const contractAbi = [
   {
     "type": "constructor",
@@ -99,6 +99,11 @@ export const contractAbi = [
         "name": "_priceNft",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "_ipfsHash",
+        "type": "string",
+        "internalType": "string"
       }
     ],
     "outputs": [],
@@ -153,6 +158,11 @@ export const contractAbi = [
             "name": "priceNft",
             "type": "uint256",
             "internalType": "uint256"
+          },
+          {
+            "name": "ipfsHash",
+            "type": "string",
+            "internalType": "string"
           }
         ]
       }
@@ -214,6 +224,11 @@ export const contractAbi = [
             "name": "priceNft",
             "type": "uint256",
             "internalType": "uint256"
+          },
+          {
+            "name": "ipfsHash",
+            "type": "string",
+            "internalType": "string"
           }
         ]
       }
@@ -486,6 +501,12 @@ export const contractAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "ipfsHash",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
       }
     ],
     "anonymous": false
