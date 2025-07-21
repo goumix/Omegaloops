@@ -103,7 +103,7 @@ export default function Home() {
                   Transform your samples into unique digital assets on the blockchain.
                   Create, trade, and monetize your audio samples with guaranteed ownership and royalty tracking.
                 </p>
-                <p className="text-tertiary font-semibold">Built on Solana for fast, secure transactions</p>
+                <p className="text-tertiary font-semibold">Built on Ethereum for secure transactions</p>
               </CardContent>
             </Card>
           </div>
