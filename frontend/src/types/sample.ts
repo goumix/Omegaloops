@@ -6,4 +6,5 @@ export interface Sample {
   description: string;
   numberOfCopies: number;
   priceNft: number;
+  ipfsHash?: string;
 }
