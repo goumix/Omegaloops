@@ -132,6 +132,13 @@ export function MediaPlayer({ ipfsHash, fileType, fileName, className }: MediaPl
 
       {/* Player UI */}
       <div className="space-y-3">
+        {/* File name */}
+        {fileName && (
+          <div className="text-sm text-zinc-300 font-medium truncate">
+            {fileName}
+          </div>
+        )}
+
         {/* Controls */}
         <div className="flex items-center space-x-3">
           <Button
@@ -162,6 +169,22 @@ export function MediaPlayer({ ipfsHash, fileType, fileName, className }: MediaPl
                 className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer slider"
               />
             </div>
+          )}
+
+          {/* Volume control */}
+          {!isLoading && !error && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleMute}
+              className="flex-shrink-0"
+            >
+              {isMuted ? (
+                <VolumeX className="w-4 h-4" />
+              ) : (
+                <Volume2 className="w-4 h-4" />
+              )}
+            </Button>
           )}
 
           {/* Time display */}
