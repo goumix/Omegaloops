@@ -169,7 +169,7 @@ export default function Home() {
               <p className="text-gray-400 mb-4">
                 Explore our Solana smart contracts for sample tokenization
               </p>
-              <a href="https://sepolia.etherscan.io/address/0xa6cc38b35513efdcf8f03e0c44034fb3a05fbe0f#code" target="_blank" rel="noopener noreferrer">
+              <a href="https://sepolia.etherscan.io/address/0xf035604db6a779a3263fd70f7be53c903f1a71fc#code" target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="w-full border-tertiary/20">View Contracts</Button>
               </a>
             </CardContent>
